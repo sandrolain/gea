@@ -1,0 +1,61 @@
+<div id="test"></div>
+
+<script src="../index.js" type="text/javascript"></script>
+<script type="text/javascript">
+
+	const $btns = hl`
+		<div ${{style: {
+			background: "#FFFF00"
+		}}}>
+			<div ref="btn1" ${{
+				click: ()=> alert('Test click'),
+				style: "color:red;border: 1px solid #F00;padding: 5px; display: inline-block"
+			}}>${() =>
+			{
+				return `Button ${Math.random()}`;
+			}}</div>
+
+			<div ${{
+				ref: 'btn2',
+				click:function() { alert('Test ' + this.innerText)},
+				"statechange:test": (e) => 
+				{
+					e.detail.refs.btn2.innerText = e.detail.state.test;
+				},
+				style:"color:red;border: 1px solid #F00;padding: 5px; display: inline-block"}}>${() =>
+			{
+				return `Button ${Math.random()}`;
+			}}</div>
+
+		</div>
+	`;
+
+	setInterval(() =>
+	{
+		$btns.setState({
+			test: Math.random()
+		});
+
+	}, 2000);
+
+	const pMargin = 20;
+	
+
+	const $ps = hl`
+	<p ${{className: ["test01", {
+		test02: false,
+		test03: true
+	}]}}>Integer posuere erat a ante venenatis dapibus posuere velit aliquet. Duis mollis, est non commodo luctus, nisi erat porttitor ligula, eget lacinia odio sem nec elit. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Nulla vitae elit libero, a pharetra augue.</p>
+
+	<p>Etiam porta sem malesuada magna mollis euismod. Etiam porta sem malesuada magna mollis euismod. Aenean eu leo quam. Pellentesque ornare sem lacinia quam venenatis vestibulum. Vivamus sagittis lacus vel augue laoreet rutrum faucibus dolor auctor. Cras justo odio, dapibus ac facilisis in, egestas eget quam. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.</p>
+
+	<p>Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Sed posuere consectetur est at lobortis.</p>
+	`;
+	
+
+
+	const $multi = hl`<div>${$btns} ${$ps}</div>`;
+
+	document.getElementById("test").appendChild($multi);	
+
+</script>
