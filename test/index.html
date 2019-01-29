@@ -1,12 +1,49 @@
 <div id="test"></div>
 
-<script src="../index.js" type="text/javascript"></script>
-<script type="text/javascript">
+<script type="module">
 
-	const $btns = hl`
+	import html, {Component} from "../index.js";
+
+	class Button extends Component
+	{
+		render()
+		{
+			return `<button>Button ${Math.random()}</button>`;
+		}
+	}
+
+	class Button2 extends Component
+	{
+		constructor()
+		{
+			super();
+		}
+
+		render()
+		{
+			return html`<button ${{
+				click: () =>
+				{
+					this.setState({
+						prova: (this.getState("prova") || 0) + 1
+					});
+				},
+				statechange: (e) =>
+				{
+					console.log(e.detail.state.prova);
+				}
+			}}>Button 2 ${Math.random()}</button>`;
+		}
+	}
+
+	const $btns = html`
 		<div ${{style: {
 			background: "#FFFF00"
 		}}}>
+			${Button}
+			${new Button2()}
+			${new Button()}
+			${new Button2()}
 			<div ref="btn1" ${{
 				click: ()=> alert('Test click'),
 				style: "color:red;border: 1px solid #F00;padding: 5px; display: inline-block"
@@ -41,7 +78,7 @@
 	const pMargin = 20;
 	
 
-	const $ps = hl`
+	const $ps = html`
 	<p ${{className: ["test01", {
 		test02: false,
 		test03: true
@@ -54,8 +91,8 @@
 	
 
 
-	const $multi = hl`<div>${$btns} ${$ps}</div>`;
+	const $multi = html`<div>${$btns} ${$ps}</div>`;
 
-	document.getElementById("test").appendChild($multi);	
+	document.getElementById("test").appendChild($multi.getDOMFragment());	
 
 </script>
