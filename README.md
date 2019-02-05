@@ -25,6 +25,8 @@ If you are interested, however, you are free to use it and share it.
 
 ## ToDo
 
+- [ ] Better way to manage first literal callback execution inside custom Component
+- [ ] Method to initialize state variables
 - [ ] Add some comments to the code
 
 
