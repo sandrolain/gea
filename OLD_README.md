@@ -1,13 +1,11 @@
-# HL
+# GEA
 
 Experimental Javascript Template String Parser Like *lit-html* but with real DOM and without virtual DOM.
 This function convert extendend HTML strings to DOM nodes.
 
-
 ## Description
 
-The *hl* tag function requires an extended html string with simple objects, DOM nodes, functions or arrays and returns a Fragment DOM.
-
+The *html* tag function requires an extended html string with simple objects, DOM nodes, functions or arrays and returns a Fragment DOM.
 
 ## Reasons
 
@@ -21,15 +19,3 @@ Thanks to **ES6, the template strings and tag functions** can ease the construct
 This is an experiment that wants to re-bring the logic of the components to the native DOM, giving a slightly more genuine feeling.
 
 If you are interested, however, you are free to use it and share it.
-
-
-## ToDo
-
-- [ ] Better way to manage first literal callback execution inside custom Component
-- [ ] Method to initialize state variables
-- [ ] Add some comments to the code
-
-
-## Next Experiments
-
-- [ ] Tag function for CSS structure to DOM text node
