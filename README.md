@@ -19,3 +19,8 @@ Thanks to **ES6, the template strings and tag functions** can ease the construct
 This is an experiment that wants to re-bring the logic of the components to the native DOM, giving a slightly more genuine feeling.
 
 If you are interested, however, you are free to use it and share it.
+
+## Example
+
+You can see a first implementation of the framework at the following URL:  
+https://www.sandrolain.com/tools-es6/
