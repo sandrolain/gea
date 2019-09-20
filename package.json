@@ -1,23 +1,26 @@
 {
-  "name": "gea",
-  "version": "1.0.0",
-  "description": "DOM based components and styles framework",
-  "main": "index.js",
-  "directories": {
-    "example": "example"
-  },
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "keywords": [
-    "components",
-    "dom",
-    "css",
-    "router",
-	"i18n",
-	"html",
-	"javascript"
-  ],
-  "author": "Sandro Lain",
-  "license": "MIT"
+	"name": "gea",
+	"version": "1.0.0",
+	"description": "DOM based components and styles framework",
+	"main": "index.js",
+	"directories": {
+		"example": "example"
+	},
+	"scripts": {
+		"live": "npx live-server ."
+	},
+	"keywords": [
+		"components",
+		"dom",
+		"css",
+		"router",
+		"i18n",
+		"html",
+		"javascript"
+	],
+	"author": "Sandro Lain",
+	"license": "MIT",
+	"devDependencies": {
+		"live-server": "^1.2.1"
+	}
 }

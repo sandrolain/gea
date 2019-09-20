@@ -67,9 +67,9 @@ export class ComponentFragment
 	{
 		keys = keys || this.state.getKeys();
 
-		this.callbacksMap.forEach((row) =>
+		this.callbacksMap.forEach((callbackInfo) =>
 		{
-			const res = row.callback.call(this, {
+			const res = callbackInfo.callback.call(this, {
 				keys,
 				oldState,
 				state: this.state,
@@ -83,14 +83,14 @@ export class ComponentFragment
 				{
 					if(this._isValidCallbackResult(res.result))
 					{
-						this._applyCallback(row, res.result);
+						this._applyCallback(callbackInfo, res.result);
 					}
 
 					res.then((res) =>
 					{
 						if(this._isValidCallbackResult(res))
 						{
-							this._applyCallback(row, res);
+							this._applyCallback(callbackInfo, res);
 						}
 
 					}).catch((e) =>
@@ -100,13 +100,13 @@ export class ComponentFragment
 				}
 				else if(res instanceof Promise)
 				{
-					// this._applyCallback(row, null);
+					// this._applyCallback(callbackInfo, null);
 
 					res.then((res) =>
 					{
 						if(this._isValidCallbackResult(res))
 						{
-							this._applyCallback(row, res);
+							this._applyCallback(callbackInfo, res);
 						}
 
 					}).catch((e) =>
@@ -116,7 +116,7 @@ export class ComponentFragment
 				}
 				else
 				{
-					this._applyCallback(row, res);
+					this._applyCallback(callbackInfo, res);
 				}
 			}
 		});
@@ -129,27 +129,38 @@ export class ComponentFragment
 		return (type !== "undefined" && type !== "boolean" && !(type == "number" && isNaN(res)));
 	}
 
-	_applyCallback(row, res)
+	_applyCallback(callbackInfo, res)
 	{
 		// Prevent multiple rendering of the same result
-		if(row.result === res)
+		if(callbackInfo.result === res)
 		{
 			return false;
 		}
 
-		ComponentFragment.batchMethod(row.components, "willUnmount");
-		ComponentFragment.detachNodes(row.$$nodes);
-		ComponentFragment.batchMethod(row.components, "didUnmount");
+		if(callbackInfo.inTag)
+		{
+			if(callbackInfo.$target)
+			{
+				// TODO: gestire aggiornamento listener
+				ComponentFragment.applyPropsToDOMNode(callbackInfo.$target, res, callbackInfo);
+			}
+		}
+		else
+		{
+			ComponentFragment.batchMethod(callbackInfo.components, "willUnmount");
+			ComponentFragment.detachNodes(callbackInfo.$$nodes);
+			ComponentFragment.batchMethod(callbackInfo.components, "didUnmount");
 
-		row.components	= ComponentFragment.getComponentsFromResult(res);
-		row.result		= res;
+			callbackInfo.components	= ComponentFragment.getComponentsFromResult(res);
+			callbackInfo.result		= res;
 
-		ComponentFragment.batchMethod(row.components, "willMount");
+			ComponentFragment.batchMethod(callbackInfo.components, "willMount");
 
-		row.$$nodes	= ComponentFragment.getNodesFromResult(res);
+			callbackInfo.$$nodes	= ComponentFragment.getNodesFromResult(res);
 
-		ComponentFragment.appendBefore(row.$placeholder, row.$$nodes);
-		ComponentFragment.batchMethod(row.components, "didMount");
+			ComponentFragment.appendBefore(callbackInfo.$placeholder, callbackInfo.$$nodes);
+			ComponentFragment.batchMethod(callbackInfo.components, "didMount");
+		}
 	}
 
 	isAttached()
@@ -208,9 +219,9 @@ export class ComponentFragment
 		this.state.setState(newState);
 	}
 
-	getState(key)
+	getState(key, def)
 	{
-		return this.state.getState(key);
+		return this.state.getState(key, def);
 	}
 
 	getNodes()
@@ -301,7 +312,7 @@ export class ComponentFragment
 
 	static isState(arg)
 	{
-		return (arg.constructor === State);
+		return arg.__is_state__;
 	}
 
 	static isDOMNode(arg)
@@ -630,7 +641,7 @@ export class ComponentFragment
 			this._uid = 0;
 		}
 
-		return `hluid-${++this._uid}`;
+		return `hl${++this._uid}`;
 	}
 
 	static detachNodes($$nodes)
@@ -683,6 +694,85 @@ export class ComponentFragment
 
 		return refsMap;
 	}
+
+	static applyPropsToDOMNode($node, props, callbackInfo = null)
+	{
+		if(props instanceof Array)
+		{
+			for(let prop of props)
+			{
+				this.applyPropsToDOMNode($node, prop);
+			}
+		}
+		else if(typeof props == "object")
+		{
+			for(let name in props)
+			{
+				let value     = props[name];
+				let valueType = typeof value;
+
+				if(valueType != "undefined" && valueType !== null)
+				{
+					if(valueType == "function")
+					{
+						const eventNames = name.split(";");
+
+						for(let eventName of eventNames)
+						{
+							$node.addEventListener(eventName, value);
+						}
+					}
+					else if(name == "className")
+					{
+						let classList = ComponentFragment.getClassNames(value);
+
+						for(let cls of classList)
+						{
+							$node.classList.add(cls);
+						}
+					}
+					else if(name == "style")
+					{
+						let style = ComponentFragment.getStyles(value);
+
+						for(let styleProp in style)
+						{
+							$node.style.setProperty(styleProp, style[styleProp]);
+						}
+					}
+					else if(valueType == "boolean")
+					{
+						if(value)
+						{
+							$node.setAttribute(name, name);
+						}
+						else
+						{
+							$node.removeAttribute(name);
+						}
+					}
+					else if(valueType == "string" || valueType == "number")
+					{
+						$node.setAttribute(name, `${value}`);
+					}
+					else if(value instanceof Date)
+					{
+						$node.setAttribute(name, value.toISOString());
+					}
+					else
+					{
+						try {
+							$node.setAttribute(name, JSON.stringify(value));
+						}
+						catch(e)
+						{
+							console.error(e);
+						}
+					}
+				}
+			}
+		}
+	}
 }
 
 
@@ -734,9 +824,9 @@ export class Component
 		return this.fragment.setState(state);
 	}
 
-	getState(key)
+	getState(key, def)
 	{
-		return this.fragment.getState(key);
+		return this.fragment.getState(key, def);
 	}
 
 	getDOMFragment()
@@ -848,200 +938,236 @@ const html = (parts, ...args) =>
 	const cbcksMap	= new Map();
 	var state		= new State();
 
-	const getNodePlaceholder = ($node) =>
+	const getNodePlaceholder = ($node, id) =>
 	{
-		const id = ComponentFragment.getUniqueId();
+		id = id || ComponentFragment.getUniqueId();
 
 		nodesMap.set(id, $node);
 
 		return `<div data-hlid="${id}"></div>`;
 	};
 
-	const getPropsPlaceholder = (props) =>
+	const getPropsPlaceholder = (props, id) =>
 	{
-		const id = ComponentFragment.getUniqueId();
+		id = id || ComponentFragment.getUniqueId();
 
-		propsMap.set(id, props);
+		const propsList = propsMap.get(id) || [];
+
+		propsList.push(props);
+
+		propsMap.set(id, propsList);
 
 		return ` data-hlid="${id}" `;
 	};
 
-	const getCbcksPlaceholder = (callback) =>
+	const getCbcksPlaceholder = (callback, inTag, id) =>
 	{
-		const id = ComponentFragment.getUniqueId();
+		id = id || ComponentFragment.getUniqueId();
+
+		if(inTag)
+		{
+			cbcksMap.set(id, {
+				inTag,
+				id: id,
+				callback: callback
+			});
+
+			return getPropsPlaceholder(callback, id);
+		}
 
 		const plc = document.createComment(id);
 
-		cbcksMap.set(id, {
-			$placeholder: plc,
-			callback: callback,
-			$$nodes: []
-		});
-
-		return getNodePlaceholder(plc);
-	};
-
-	const checkArgType = (arg) =>
-	{
-		let argType = typeof arg;
-
-		if(argType == "function")
-		{
-			if(arg.prototype instanceof Component)
-			{
-				arg = new arg();
-
-				return {value: getNodePlaceholder(arg)};
-			}
-
-			return {value: getCbcksPlaceholder(arg)};
-		}
-
-		if(argType == "undefined" || arg === null)
-		{
-			return false;
-		}
-
-		if(argType == "boolean")
-		{
-			return arg;
-		}
-
-		if(argType == "string" || argType == "number")
-		{
-			return {value: arg};
-		}
-
-		if(arg instanceof Array)
-		{
-			let arrRes = arg.map((val) =>
-			{
-				let resVal = checkArgType(val);
-
-				return resVal ? resVal.value : "";
+			cbcksMap.set(id, {
+				inTag,
+				id: id,
+				$placeholder: plc,
+				callback: callback,
+				$$nodes: []
 			});
 
-			return {value: arrRes.join("")}
-		}
-
-		if(ComponentFragment.isCallback(arg))
-		{
-			return {value: getCbcksPlaceholder(arg)};
-		}
-
-		if(ComponentFragment.isState(arg))
-		{
-			state = arg;
-
-			return false;
-		}
-
-		if(ComponentFragment.isDOMNode(arg))
-		{
-			return {value: getNodePlaceholder(arg)};
-		}
-
-		if(ComponentFragment.isComponentFragment(arg))
-		{
-			return {value: getNodePlaceholder(arg.getDOMFragment())};
-		}
-
-		if(ComponentFragment.isComponent(arg))
-		{
-			return {value: getNodePlaceholder(arg)};
-		}
-
-		if(arg instanceof ClassRule)
-		{
-			return {value: getPropsPlaceholder({
-				className: arg.className
-			})};
-		}
-
-		// NOTE: Promise case?
-
-		if(argType == "object")
-		{
-			return {value: getPropsPlaceholder(arg)};
-		}
-
-		return false;
+			return getNodePlaceholder(plc, id);
 	};
 
-	for(let str of parts)
+	let lastInTag = false;
+	let lastTagId = null;
+
+	const applyArgumentToPosition = (arg, prevStr, nextStr) =>
 	{
+		let argType	= typeof arg;
+		let closeOrContinueTag = !!(nextStr && nextStr.match(/^([^<]*>.*|[^><]+)$/m));
+		let hasClosedTag = !!prevStr.match(/>/m);
+		let inTag	= !!(
+			(prevStr.match(/<[^>]+$/m)
+				|| (lastInTag
+					&& prevStr.match(/^[^><]+$/m)))
+			&& closeOrContinueTag
+		);
+		let alreadyInTag = (inTag && lastInTag && !hasClosedTag);
+
+		let tagId = alreadyInTag ? lastTagId : ComponentFragment.getUniqueId();
+
+		lastInTag = inTag;
+		lastTagId = tagId;
+
+		const checkArgType = (arg) =>
+		{
+			if(argType == "function")
+			{
+				if(arg.prototype instanceof Component)
+				{
+					arg = new arg();
+
+					return {
+						value: getNodePlaceholder(arg),
+						inTag
+					};
+				}
+
+				return {
+					value: getCbcksPlaceholder(arg, inTag, tagId),
+					inTag
+				};
+			}
+
+			if(argType == "undefined" || arg === null)
+			{
+				return false;
+			}
+
+			if(argType == "boolean")
+			{
+				return arg;
+			}
+
+			if(argType == "string" || argType == "number")
+			{
+				return {
+					value: arg,
+					inTag
+				};
+			}
+
+			if(arg instanceof Array)
+			{
+				let arrRes = arg.map((val) =>
+				{
+					let resVal = checkArgType(val);
+
+					return resVal ? resVal.value : "";
+				});
+
+				return {
+					value: arrRes.join(""),
+					inTag
+				};
+			}
+
+			if(ComponentFragment.isCallback(arg))
+			{
+				return {
+					value: getCbcksPlaceholder(arg, inTag, tagId),
+					inTag
+				};
+			}
+
+			if(ComponentFragment.isState(arg))
+			{
+				state = arg;
+
+				return false;
+			}
+
+			if(ComponentFragment.isDOMNode(arg))
+			{
+				return {
+					value: getNodePlaceholder(arg),
+					inTag
+				};
+			}
+
+			if(ComponentFragment.isComponentFragment(arg))
+			{
+				return {
+					value: getNodePlaceholder(arg.getDOMFragment()),
+					inTag
+				};
+			}
+
+			if(ComponentFragment.isComponent(arg))
+			{
+				return {
+					value: getNodePlaceholder(arg),
+					inTag
+				};
+			}
+
+			if(arg instanceof ClassRule)
+			{
+				return {
+					value: getPropsPlaceholder({className: arg.className}, tagId),
+					inTag
+				};
+			}
+
+			// TODO: Promise case?
+
+			if(argType == "object")
+			{
+				return {
+					value: getPropsPlaceholder(arg, tagId),
+					inTag
+				};
+			}
+
+			return false;
+		};
+
+		return checkArgType(arg);
+	};
+
+	for(let i = 0, len = parts.length; i < len; i++)
+	{
+		let str = parts[i],
+			nextStr = parts[i + 1];
+
 		html.push(str);
 
-		let resArg = checkArgType(args.shift());
+		let resArg = applyArgumentToPosition(args.shift(), str, nextStr);
 
 		html.push(resArg ? resArg.value : "");
 	}
 
-
 	// Convert HTML pieces to DOM Node
-
 	const $temp = document.createElement("div");
 
 	$temp.innerHTML = html.join("").trim();
+
+
+	for(let [id, row] of cbcksMap.entries())
+	{
+		if(row.inTag)
+		{
+			let $node = $temp.querySelector(`[data-hlid="${id}"]`);
+
+			if($node)
+			{
+				row.$target = $node;
+			}
+		}
+	}
+
+
+
+
+
 
 	for(let [id, props] of propsMap.entries())
 	{
 		let $node = $temp.querySelector(`[data-hlid="${id}"]`);
 
-		for(let name in props)
-		{
-			let value = props[name];
+		ComponentFragment.applyPropsToDOMNode($node, props);
 
-			let valueType = typeof value;
-
-			if(valueType != "undefined" && valueType !== null)
-			{
-				if(valueType == "function")
-				{
-					const eventNames = name.split(";");
-
-					for(let eventName of eventNames)
-					{
-						$node.addEventListener(eventName, value);
-					}
-				}
-				else if(name == "className")
-				{
-					let classList = ComponentFragment.getClassNames(value);
-
-					for(let cls of classList)
-					{
-						$node.classList.add(cls);
-					}
-				}
-				else if(name == "style")
-				{
-					let style = ComponentFragment.getStyles(value);
-
-					for(let styleProp in style)
-					{
-						$node.style.setProperty(styleProp, style[styleProp]);
-					}
-				}
-				else if(valueType == "boolean")
-				{
-					if(value)
-					{
-						$node.setAttribute(name, name);
-					}
-					else
-					{
-						$node.removeAttribute(name);
-					}
-				}
-				else
-				{
-					$node.setAttribute(name, value);
-				}
-			}
-		}
-
-		$node.removeAttribute("data-hlid");
+		// $node.removeAttribute("data-hlid");
 	}
 
 

@@ -18,6 +18,11 @@ export default class State
 			},
 			get: (target, name) =>
 			{
+				if(name == "__is_state__")
+				{
+					return true;
+				}
+
 				if(name == "constructor")
 				{
 					return State;
@@ -103,7 +108,7 @@ export default class State
 		}
 	}
 
-	getState(key)
+	getState(key, def = undefined)
 	{
 		if(key instanceof Array)
 		{
@@ -111,13 +116,18 @@ export default class State
 
 			for(let k in key)
 			{
-				res[k] = this.stateMap.get(k);
+				res[k] = this.getState(k, def);
 			}
 
 			return res;
 		}
 
-		return this.stateMap.get(key);
+		if(this.stateMap.has(key))
+		{
+			return this.stateMap.get(key);
+		}
+
+		return def;
 	}
 
 	getKeys()

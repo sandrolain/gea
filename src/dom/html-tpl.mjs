@@ -17,9 +17,9 @@ class TplComponent extends Component
 
 		if(script)
 		{
-			const fn = new Function("component", "refs", "ids", "state", script);
+			const fn = new Function("component", "refs", "ids", "state", "style", script);
 
-			fn.call(this, this, this.refs, this.ids, this.state);
+			fn.call(this, this, this.refs, this.ids, this.state, style);
 		}
 	}
 
