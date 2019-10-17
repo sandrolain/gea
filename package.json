@@ -7,6 +7,10 @@
 		"example": "example"
 	},
 	"scripts": {
+		"test": "jest",
+		"test:coverage": "jest --coverage",
+		"build": "tsc",
+		"build:watch": "tsc -w",
 		"live": "npx live-server ."
 	},
 	"keywords": [
@@ -18,9 +22,28 @@
 		"html",
 		"javascript"
 	],
+	"devDependencies": {
+		"@types/jest": "^24.0.19",
+		"@types/node": "^12.11.1",
+		"@typescript-eslint/eslint-plugin": "^2.4.0",
+		"@typescript-eslint/parser": "^2.4.0",
+		"eslint": "^6.5.1",
+		"jest": "^24.9.0",
+		"jsdom-mount": "^0.1.0",
+		"live-server": "^1.2.1",
+		"node-fetch": "^2.6.0",
+		"ts-jest": "^24.1.0",
+		"typescript": "^3.6.4"
+	},
+	"watch-ts": "tsc -w",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/sandrolain/gea.git"
+	},
 	"author": "Sandro Lain",
 	"license": "MIT",
-	"devDependencies": {
-		"live-server": "^1.2.1"
-	}
+	"bugs": {
+		"url": "https://github.com/sandrolain/gea/issues"
+	},
+	"homepage": "https://github.com/sandrolain/gea#readme"
 }
