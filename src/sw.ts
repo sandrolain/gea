@@ -1,6 +1,7 @@
+
 const settings = {
   cacheName: "cache-v2",
-  resourcesToCache: [],
+  resourcesToCache: ([] as string[]),
   saveInCache: true,
   cacheFirst: false,
   defaultImage: "./assets/sw-default-image.png",
@@ -17,4 +18,4 @@ const settings = {
 };
 
 
-self.importScripts("./sw/sw-runtime.js");
+(self as any).importScripts("./sw/sw-runtime.js");

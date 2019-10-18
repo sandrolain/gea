@@ -1,24 +1,25 @@
-const mountDOM = require("jsdom-mount");
-import { get, post } from "../src/http";
-
-// TODO: mock global
-(global as any).fetch = require("node-fetch");
+/// <reference types="chai" />
+import { get, post } from "../src/http.js";
 
 describe("http module", () => {
-
-  beforeAll(() => {
-    mountDOM.default("<div></div>");
+  it("get json request", async () => {
+    const response = await get("/assets/fetch.json", { parse: "json" });
+    chai.expect(response).to.be.eql({ status: "ok" });
   });
 
-  it("get request", async () => {
-    const response = await get("https://cors-test.appspot.com/test", { parse: "json" });
-    expect(response).toMatchObject({ "status":"ok" });
+  it("CORS get request", async () => {
+    const response = await get("https://cors-test.appspot.com/test", {
+      parse: "json",
+      mode: "cors"
+    });
+    chai.expect(response).to.be.eql({ status: "ok" });
   });
 
-  it("post request", async () => {
-    const response = await post("https://cors-test.appspot.com/test", { parse: "json" });
-    expect(response).toMatchObject({ "status":"ok" });
+  it("CORS post request", async () => {
+    const response = await post("https://cors-test.appspot.com/test", {
+      parse: "json",
+      mode: "cors"
+    });
+    chai.expect(response).to.be.eql({ status: "ok" });
   });
-
-
 });
