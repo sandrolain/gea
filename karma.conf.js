@@ -19,13 +19,29 @@ module.exports = function (config) {
       },
     ],
     preprocessors: {
-      "**/*.ts": "typescript" // *.tsx for React Jsx
+      "src/*.ts": ["typescript"],
+      "test/*.ts": ["typescript"]
     },
     reporters: ["progress", "coverage"],
+    coverageReporter: {
+      reporters: [{
+          type: "html",
+          dir: "coverage",
+          subdir: function (browser) {
+            // normalization process to keep a consistent browser name across different
+            // OS
+            return browser.toLowerCase().split(/[ /-]/)[0];
+          }
+        },
+        {
+          type: "text"
+        }
+      ]
+    },
     port: 9876, // karma web server port
     colors: true,
-    logLevel: config.LOG_DEBUG,
-    browsers: ["Chrome"],
+    logLevel: config.LOG_INFO,
+    browsers: ["Chrome", "Firefox"],
     autoWatch: false,
     singleRun: true,
     concurrency: Infinity,

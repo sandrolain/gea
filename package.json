@@ -1,56 +1,58 @@
 {
-	"name": "gea",
-	"version": "1.0.0",
-	"description": "DOM based components and styles framework",
-	"main": "index.js",
-	"directories": {
-		"example": "example"
-	},
-	"scripts": {
-		"test": "jest",
-		"test:coverage": "jest --coverage",
-		"build": "tsc",
-		"build:watch": "tsc -w",
-		"live": "npx live-server ."
-	},
-	"keywords": [
-		"components",
-		"dom",
-		"css",
-		"router",
-		"i18n",
-		"html",
-		"javascript"
-	],
-	"devDependencies": {
-		"@types/chai": "^4.2.3",
-		"@types/mocha": "^5.2.7",
-		"@types/node": "^12.11.1",
-		"@typescript-eslint/eslint-plugin": "^2.4.0",
-		"@typescript-eslint/parser": "^2.4.0",
-		"chai": "^4.2.0",
-		"eslint": "^6.5.1",
-		"jsdom-mount": "^0.1.0",
-		"karma": "^4.4.0",
-		"karma-chai": "^0.1.0",
-		"karma-chrome-launcher": "^3.1.0",
-		"karma-mocha": "^1.3.0",
-		"karma-typescript": "^4.1.1",
-		"karma-typescript-preprocessor": "^0.4.0",
-		"live-server": "^1.2.1",
-		"mocha": "^6.2.1",
-		"node-fetch": "^2.6.0",
-		"typescript": "^3.6.4"
-	},
-	"watch-ts": "tsc -w",
-	"repository": {
-		"type": "git",
-		"url": "git+https://github.com/sandrolain/gea.git"
-	},
-	"author": "Sandro Lain",
-	"license": "MIT",
-	"bugs": {
-		"url": "https://github.com/sandrolain/gea/issues"
-	},
-	"homepage": "https://github.com/sandrolain/gea#readme"
+  "name": "gea",
+  "version": "1.0.0",
+  "description": "DOM based components and styles framework",
+  "main": "index.js",
+  "directories": {
+    "example": "example"
+  },
+  "scripts": {
+    "test": "npx karma start karma.conf.js",
+    "test:chrome": "npx karma start --browsers Chrome karma.conf.js",
+    "test:firefox": "npx karma start --browsers Firefox karma.conf.js",
+    "build": "tsc",
+    "build:watch": "tsc -w",
+    "live": "npx live-server ."
+  },
+  "keywords": [
+    "components",
+    "dom",
+    "css",
+    "router",
+    "i18n",
+    "html",
+    "javascript"
+  ],
+  "devDependencies": {
+    "@types/chai": "^4.2.3",
+    "@types/mocha": "^5.2.7",
+    "@types/node": "^12.11.1",
+    "@typescript-eslint/eslint-plugin": "^2.4.0",
+    "@typescript-eslint/parser": "^2.4.0",
+    "chai": "^4.2.0",
+    "eslint": "^6.5.1",
+    "jsdom-mount": "^0.1.0",
+    "karma": "^4.4.0",
+    "karma-chai": "^0.1.0",
+    "karma-chrome-launcher": "^3.1.0",
+    "karma-firefox-launcher": "^1.2.0",
+    "karma-mocha": "^1.3.0",
+    "karma-typescript": "^4.1.1",
+    "karma-typescript-preprocessor": "^0.4.0",
+    "live-server": "^1.2.1",
+    "mocha": "^6.2.1",
+    "node-fetch": "^2.6.0",
+    "typescript": "^3.6.4"
+  },
+  "watch-ts": "tsc -w",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sandrolain/gea.git"
+  },
+  "author": "Sandro Lain",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/sandrolain/gea/issues"
+  },
+  "homepage": "https://github.com/sandrolain/gea#readme"
 }
