@@ -7,7 +7,7 @@
     "example": "example"
   },
   "scripts": {
-    "test": "npx karma start karma.conf.js",
+    "test": "npx karma start --browsers ChromeHeadless karma.conf.js",
     "test:chrome": "npx karma start --browsers Chrome karma.conf.js",
     "test:firefox": "npx karma start --browsers Firefox karma.conf.js",
     "build": "tsc",
@@ -37,6 +37,7 @@
     "karma-chrome-launcher": "^3.1.0",
     "karma-firefox-launcher": "^1.2.0",
     "karma-mocha": "^1.3.0",
+    "karma-spec-reporter": "0.0.32",
     "karma-typescript": "^4.1.1",
     "karma-typescript-preprocessor": "^0.4.0",
     "live-server": "^1.2.1",

@@ -1,4 +1,7 @@
-const initialize = (self: any /*ServiceWorkerGlobalScope*/, settings: Record<string, any>): void => {
+/// <reference no-default-lib="true"/>
+/// <reference lib="webworker" />
+
+const initialize = (self: ServiceWorkerGlobalScope, settings: Record<string, any>): void => {
 
   const addToCache = (resourcesList: string[]): Promise<any> => {
     settings.debug && console.info("[SW]", "Add to Cache", settings.cacheName, resourcesList);
@@ -258,4 +261,4 @@ const initialize = (self: any /*ServiceWorkerGlobalScope*/, settings: Record<str
 
 // eslint-disable-next-line
 // @ts-ignore
-initialize(self as any, settings as Record<string, any>);
+initialize(<ServiceWorkerGlobalScope>self, settings as Record<string, any>);

@@ -1,7 +1,0 @@
-{
-  "extends": "./tsconfig",
-  "files": [
-    "src/lib/sw-runtime.ts"
-  ],
-  "lib": ["dom", "webworker", "es2016"]
-}

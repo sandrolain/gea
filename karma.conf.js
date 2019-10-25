@@ -22,7 +22,7 @@ module.exports = function (config) {
       "src/*.ts": ["typescript"],
       "test/*.ts": ["typescript"]
     },
-    reporters: ["progress", "coverage"],
+    reporters: ["spec", "coverage"],
     coverageReporter: {
       reporters: [{
           type: "html",
@@ -41,7 +41,7 @@ module.exports = function (config) {
     port: 9876, // karma web server port
     colors: true,
     logLevel: config.LOG_INFO,
-    browsers: ["Chrome", "Firefox"],
+    browsers: ["ChromeHeadless", "Chrome", "Firefox"],
     autoWatch: false,
     singleRun: true,
     concurrency: Infinity,
@@ -52,8 +52,22 @@ module.exports = function (config) {
     // plugins: [
     //   "karma-chrome-launcher",
     //   "karma-typescript-preprocessor"
-    // ],
-
+    // // ],
+    // karmaTypescriptConfig: {
+    //   compilerOptions: {
+    //     ...require("./tsconfig.json").compilerOptions
+    //   },
+    //   include: [
+    //     './src/*.ts',
+    //     './test/*.test.ts',
+    //   ],
+    //   // bundlerOptions: {
+    //   //     transforms: [
+    //   //         require('karma-typescript-es6-transform')()
+    //   //     ],
+    //   //     entrypoints: /\.spec\.ts$/,
+    //   // }
+    // },
     typescriptPreprocessor: {
       // options passed to the typescript compiler
       options: {

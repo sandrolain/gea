@@ -1,3 +1,5 @@
+/// <reference no-default-lib="true"/>
+/// <reference lib="webworker" />
 
 const settings = {
   cacheName: "cache-v2",
@@ -16,6 +18,5 @@ const settings = {
   </svg>`,
   debug: true
 };
-
 
 (self as any).importScripts("./sw/sw-runtime.js");
