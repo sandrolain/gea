@@ -1,4 +1,5 @@
 /// <reference types="chai" />
+const expect = chai.expect;
 import * as utils from "../src/utils.js";
 
 describe("utils module", () => {
@@ -59,7 +60,16 @@ describe("utils module", () => {
       });
       expect(obj1).is.not.equal(result);
       expect(obj1.foo).is.not.equal(result.foo);
-      expect(obj1.foo.arr).is.not.equal(result.foo.arr);
+      expect(obj1.foo.arr).is.equal(result.foo.arr);
+    });
+  });
+
+  describe("utils.escapeRegExp", () => {
+    it("test string escape", async () => {
+      const value = utils.escapeRegExp("-[]{}()*+?.,\\^$|#");
+      expect(value).to.be.equal(
+        "\\-\\[\\]\\{\\}\\(\\)\\*\\+\\?\\.\\,\\\\\\^\\$\\|\\#"
+      );
     });
   });
 });

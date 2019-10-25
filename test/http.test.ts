@@ -1,4 +1,5 @@
 /// <reference types="chai" />
+const expect = chai.expect;
 import { get, post } from "../src/http.js";
 
 describe("http module", () => {
