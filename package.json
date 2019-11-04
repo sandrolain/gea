@@ -43,6 +43,7 @@
     "live-server": "^1.2.1",
     "mocha": "^6.2.1",
     "node-fetch": "^2.6.0",
+    "typedoc": "^0.15.0",
     "typescript": "^3.6.4"
   },
   "watch-ts": "tsc -w",

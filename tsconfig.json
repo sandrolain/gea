@@ -23,5 +23,9 @@
     "test/*.test.ts",
     "src/sw-runtime.ts",
     "src/sw.ts"
-  ]
+  ],
+  "typedocOptions": {
+      "mode": "modules",
+      "out": "docs"
+  }
 }
