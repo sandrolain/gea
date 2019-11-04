@@ -3,6 +3,7 @@ const expect = chai.expect;
 import { Emitter } from "../src/Emitter.js";
 
 describe("Emitter module", () => {
+
   it("emit with callback", done => {
     const subject = new Emitter();
 
