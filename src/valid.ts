@@ -135,7 +135,7 @@ ValidatorRules.setRules({
     return (typeof value === "string");
   },
   username: (value) => {
-    return ValidatorRules.validateWithRule("string", value) && !!value.match(/^[A-Za-z0-9]+(?:[ _-][A-Za-z0-9]+)*$/);
+    return ValidatorRules.validateWithRule("string", value) && !!value.match(/^[A-Za-z0-9]+(?:[ \._-][A-Za-z0-9]+)*$/);
   },
   password: (value, min = Validator.minPasswordSize, max = 50) => {
     return ValidatorRules.validateWithRule("string", value) && ValidatorRules.validateWithRule("size", value, min, max);
@@ -305,9 +305,7 @@ export const validate = (name: string, ...args: any[]): boolean => {
   return ValidatorRules.validateWithRule(name, ...args);
 };
 
-const checkIf = (value: any): Validator => {
+export const checkIf = (value: any): Validator => {
   return new Validator(value);
 };
-
-export default checkIf;
 
