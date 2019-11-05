@@ -178,7 +178,7 @@ export class ComponentFragment {
     return document.body.contains(this.$$nodes[0]);
   }
 
-  onChange ({ keys, oldState }: StateChange): boolean {
+  onStateChange ({ keys, oldState }: StateChange): boolean {
     if(!this.isAttached()) {
       return false;
     }

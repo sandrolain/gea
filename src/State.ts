@@ -4,7 +4,7 @@ export interface StateChange {
   oldState: Record<string, any>;
 }
 
-export default class State {
+export class State {
   protected stateMap: Map<string, any>;
   protected targets: Set<any>;
 
@@ -58,10 +58,12 @@ export default class State {
     this.targets.delete(target);
   }
 
-  onChange (stateChange: StateChange): void {
+  private onChange (stateChange: StateChange): void {
     for(const target of this.targets) {
-      if("onChange" in target) {
-        target.onChange(stateChange);
+      if(typeof target === "function") {
+        target.call(this, stateChange);
+      } else if("onStateChange" in target) {
+        target.onStateChange(stateChange);
       }
     }
   }
